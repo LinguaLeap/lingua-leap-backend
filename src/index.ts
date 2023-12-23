@@ -35,4 +35,5 @@ async function bootstrap() {
     });
     database.connect();
 }
-bootstrap()
+
+bootstrap();

@@ -1,5 +1,6 @@
 import passport from "passport";
 import User from "../models/User";
+import jwt from 'jsonwebtoken';
 import {
     Profile,
     Strategy as GoogleStrategy,
@@ -21,20 +22,22 @@ passport.use(
             done: VerifyCallback
         ) => {
             const existingUser = await User.findOne({ googleId: profile.id });
-            console.log(accessToken, refreshToken)
+
             if (existingUser) {
-                done(null, existingUser);
+                const token = jwt.sign({ userId: existingUser._id }, process.env.JWT_SECRET_KEY || "");
+                done(null, {existingUser, token});
             } else {
                 const newUser = await new User({
                     googleId: profile.id,
-                    username: profile.displayName,
+                    displayName: profile.displayName,
                     familyName: profile.name?.familyName,
                     givenName: profile.name?.givenName,
                     photos: profile.photos,
                     emails: profile.emails,
                 }).save();
 
-                done(null, newUser);
+                const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY || "");
+                done(null, {newUser, token});
             }
         }
     )
