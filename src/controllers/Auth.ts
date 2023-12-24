@@ -1,15 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../helpers/jwtUtils";
-import { getToken, storeToken } from "../configs/redisClient";
+import { storeToken } from "../configs/redisClient";
 
 interface User {
-    existingUser: {
+    user: {
         _id: string;
     };
-    userId: string;
 }
 
-export const loginUser = async (
+export const LoginUser = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -17,8 +16,8 @@ export const loginUser = async (
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized" });
     }
-
-    const userId = (req.user as User).existingUser._id.toString();
+    
+    const userId = (req.user as User).user._id.toString();
     const token = generateToken(userId);
 
     storeToken(userId, token);
@@ -26,24 +25,13 @@ export const loginUser = async (
     res.json({ token });
 };
 
-export const authenticatedEndpoint = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
+export const Me = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+
+        res.json({ user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Sunucu hatası" });
     }
-
-    const userId = (req.user as User).userId.toString();
-    const storedToken = await getToken(userId);
-
-    if (
-        !storedToken ||
-        storedToken !== req.headers.authorization?.split(" ")[1]
-    ) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    res.json({ message: "Authorized" });
 };

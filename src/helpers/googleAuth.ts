@@ -37,7 +37,7 @@ passport.use(
                 }).save();
 
                 const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY || "");
-                done(null, {newUser, token});
+                done(null, {user: newUser, token});
             }
         }
     )

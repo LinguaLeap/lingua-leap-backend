@@ -10,6 +10,9 @@ const userSchema = new mongoose.Schema({
     givenName: String,
     photos: [{ value: String }],
     emails: [{ value: String, verified: Boolean }],
+    gender: Number,
+    birthDate: Date,
+    country: Number,
     password: String,
     mainLanguage: String,
     otherLanguages: [

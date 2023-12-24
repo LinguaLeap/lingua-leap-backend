@@ -1,15 +1,12 @@
-import { NextFunction, Request, Response, Router } from "express";
-import { isAuthenticated } from "../middlewares/Auth";
-import { authenticatedEndpoint, loginUser } from "../controllers/Auth";
-import passport from "passport";
+import { Router } from "express";
+import authRouter from "./auth";
+import userRouter from "./user";
+import usersRouter from "./users";
 
 const router = Router();
 
-router.get("/", isAuthenticated, authenticatedEndpoint);
-
-router.get("/auth/google", passport.authenticate("google"), (req, res) =>
-    res.send(200)
-);
-router.get("/auth/google/redirect", passport.authenticate("google"), loginUser);
+router.use("/auth", authRouter);
+router.use("/user", userRouter);
+router.use("/users", usersRouter);
 
 export default router;
