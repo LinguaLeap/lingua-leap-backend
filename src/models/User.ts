@@ -26,8 +26,6 @@ const userSchema = new mongoose.Schema({
             userId: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "users",
-                unique: true,
-                require: true,
             },
             status: {
                 type: Boolean,

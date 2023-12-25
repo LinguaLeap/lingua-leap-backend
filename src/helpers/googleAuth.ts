@@ -1,6 +1,6 @@
 import passport from "passport";
 import User from "../models/User";
-import jwt from 'jsonwebtoken';
+
 import {
     Profile,
     Strategy as GoogleStrategy,
@@ -24,8 +24,7 @@ passport.use(
             const existingUser = await User.findOne({ googleId: profile.id });
 
             if (existingUser) {
-                const token = jwt.sign({ userId: existingUser._id }, process.env.JWT_SECRET_KEY || "");
-                done(null, {existingUser, token});
+                done(null, existingUser);
             } else {
                 const newUser = await new User({
                     googleId: profile.id,
@@ -36,8 +35,7 @@ passport.use(
                     emails: profile.emails,
                 }).save();
 
-                const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY || "");
-                done(null, {user: newUser, token});
+                done(null, newUser);
             }
         }
     )

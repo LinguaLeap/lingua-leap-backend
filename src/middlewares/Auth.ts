@@ -1,10 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../helpers/jwtUtils";
-import { getToken } from "../configs/redisClient";
-
-interface User {
-    userId: string;
-}
+import { getToken } from "../controllers/Auth";
+import { User } from "../types/User";
 
 const isAuthenticated = async (
     req: Request,
@@ -25,15 +22,12 @@ const isAuthenticated = async (
         if (!decodedToken) {
             return res.status(401).json({ message: "Unauthorized" });
         }
+        // @ts-ignore
+        req.user = decodedToken.user;
 
-        req.user = decodedToken;
+        const storedToken = await getToken((req.user as User)._id);
 
-        const storedToken = await getToken((req.user as User).userId);
-
-        if (
-            !storedToken ||
-            storedToken !== token.split(" ")[1]
-        ) {
+        if (!storedToken || storedToken !== token.split(" ")[1]) {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
