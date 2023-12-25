@@ -17,6 +17,8 @@ export const LoginUser = async (
     const token = generateToken(user);
 
     storeToken(user._id, token);
+    
+    res.redirect(process.env.FRONTEND_URL+"/token/"+ token);
 
     res.json({ token });
 };
