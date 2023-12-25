@@ -19,8 +19,6 @@ export const LoginUser = async (
     storeToken(user._id, token);
     
     res.redirect(process.env.FRONTEND_URL+"/token/"+ token);
-
-    res.json({ token });
 };
 
 export const Me = async (req: Request, res: Response, next: NextFunction) => {
