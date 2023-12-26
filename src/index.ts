@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import router from "./routes";
 import passport from "passport";
@@ -7,9 +7,8 @@ import session from "express-session";
 import Database from "./configs/database";
 import client from "./configs/redisClient";
 import io from "./socketIO/socketIO";
-import { verifyToken } from "./helpers/jwtUtils";
 import RedisStore from "connect-redis";
-import { socketMiddleware } from "./middlewares/SocketIO";
+import boom from "@hapi/boom";
 require("./helpers/googleAuth");
 
 async function bootstrap() {
@@ -39,22 +38,25 @@ async function bootstrap() {
 
     app.use("/", router);
 
+    app.use((err:any, req: Request, res: Response, next: NextFunction) => {
+        console.log(err);
+    
+        if (err) {
+            if (err.output) {
+                return res
+                    .status(err.output.statusCode || 500)
+                    .json(err.output.payload);
+            }
+    
+            return res.status(500).json(err);
+        }
+    });
+    
     const server = app.listen(port, () => {
         console.log(`Server is running at http://localhost:${port}`);
     });
 
     io.attach(server);
-
-    io.use(socketMiddleware);
-
-    io.on("connection", (socket) => {
-        socket.on("message", (data) => {
-            console.log("Received message from client:", socket.data.user.emails[0].value);
-            // İstemciye "response" mesajını gönder
-            io.to(socket.id).emit("response", "Hello" + socket.data.user.emails[0].value);
-        });
-        io.to(socket.id).emit("response", "Hello from server!");
-    });
     
     database.connect();
 }

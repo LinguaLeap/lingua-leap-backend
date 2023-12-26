@@ -1,10 +1,16 @@
-import { getToken } from "../controllers/Auth";
+import { getToken } from "../controllers/Auth/Auth";
 import { verifyToken } from "../helpers/jwtUtils";
 
 export const socketMiddleware = async (socket: any, next: any) => {
     const token = socket.handshake.query.token;
     if (token) {
-        const decodedToken = verifyToken(token);
+        if (!token.startsWith("Bearer ")) {
+            next(new Error("unauthorized"));
+        }
+
+        const tokenValue = token.slice(7);
+
+        const decodedToken = verifyToken(tokenValue);
 
         if (!decodedToken) {
             next(new Error("unauthorized"));
@@ -14,7 +20,7 @@ export const socketMiddleware = async (socket: any, next: any) => {
 
         const storedToken = await getToken(socket.data.user._id);
 
-        if (!storedToken || storedToken !== token) {
+        if (!storedToken || storedToken !== tokenValue) {
             next(new Error("unauthorized"));
         }
 

@@ -1,4 +1,4 @@
-export interface User {
+export interface UserType {
     _id: string;
     googleId: string;
     displayName: string;
@@ -8,28 +8,21 @@ export interface User {
     emails: Email[];
     mainLanguage: string;
     otherLanguages: LanguageLevel[];
-    friends: Friend[];
     createdAt: string;
-  }
-  
-  export interface Photo {
+}
+
+export interface Photo {
     value: string;
     _id: string;
-  }
-  
-  export interface Email {
+}
+
+export interface Email {
     value: string;
     verified: boolean;
     _id: string;
-  }
-  
-  export interface LanguageLevel {
+}
+
+export interface LanguageLevel {
     language: string;
     level: number;
-  }
-  
-  export interface Friend {
-    _id: string;
-    userId: string;
-    status: boolean;
-  }
+}
