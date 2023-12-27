@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User";
+import boom from "@hapi/boom";
 
 const limit = 30;
 
@@ -20,7 +21,7 @@ export const GetUserList = async (
         const prevPage = page > 1 ? page - 1 : null;
 
         if (!users) {
-            return res.status(401).json({ message: "User is not found!" });
+            return next(boom.notFound("User is not found!"));
         }
 
         const result = {
@@ -65,13 +66,13 @@ export const SearchUserList = async (
             .skip(startIndex)
             .limit(limit);
 
-        const totalUsers = await User.countDocuments();
+        const totalUsers = await User.countDocuments(filterObject);
         const totalPages = Math.ceil(totalUsers / limit);
         const nextPage = page < totalPages ? page + 1 : null;
         const prevPage = page > 1 ? page - 1 : null;
 
         if (users.length === 0) {
-            return res.status(401).json({ message: "User is not found!" });
+            return next(boom.notFound("User is not found!"));            
         }
 
         const result = {

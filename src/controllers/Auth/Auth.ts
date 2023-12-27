@@ -2,7 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../helpers/jwtUtils";
 import client from "../../configs/redisClient";
 import { UserType } from "../../types/UserType";
-import { RegisterValidation, UpdateValidation } from "./validation";
+import {
+    LoginValidation,
+    RegisterValidation,
+    UpdateValidation,
+} from "./validation";
 import User from "../../models/User";
 import boom from "@hapi/boom";
 
@@ -12,7 +16,7 @@ export const LoginWithGoogle = async (
     next: NextFunction
 ) => {
     if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return next(boom.unauthorized("Unauthorized"));
     }
 
     const user = req.user as UserType;
@@ -30,6 +34,12 @@ export const LoginWithEmail = async (
     next: NextFunction
 ) => {
     const { email, password } = req.body;
+
+    try {
+        await LoginValidation.validate(req.body);
+    } catch (error: any) {
+        return next(boom.badRequest(error.errors));
+    }
 
     const user = await User.findOne({
         "emails.value": email,
@@ -136,7 +146,7 @@ export const Me = async (req: Request, res: Response, next: NextFunction) => {
         res.json({ user });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Sunucu hatası" });
+        return next(boom.serverUnavailable("Server error"));
     }
 };
 

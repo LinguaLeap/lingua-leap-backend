@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User";
+import boom from "@hapi/boom";
+
 
 export const GetUser = async (
     req: Request,
@@ -9,14 +11,14 @@ export const GetUser = async (
     const { id } = req.params;
 
     if (!id) {
-        return res.status(401).json({ message: "ID is required" });
+        return next(boom.badRequest("ID is required"));
     }
 
     try {
         const user = await User.findById(id);
 
         if (!user) {
-            return res.status(401).json({ message: "User is not found!" });
+            return next(boom.notFound("User is not found!"));
         }
         
         res.json(user);

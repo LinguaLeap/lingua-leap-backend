@@ -2,10 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema({
-    googleId: {
-        type: String,
-        default: null,
-    },
+    googleId: String,
     displayName: String,
     familyName: String,
     givenName: String,
@@ -15,7 +12,7 @@ const userSchema = new mongoose.Schema({
     birthDate: Date,
     country: Number,
     password: String,
-    mainLanguage: String,
+    mainLanguage: [String],
     otherLanguages: [
         {
             language: String,

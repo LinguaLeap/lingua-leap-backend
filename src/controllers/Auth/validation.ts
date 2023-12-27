@@ -36,7 +36,7 @@ export const RegisterValidation = yup.object({
             })
         )
         .required("Other Languages are required"),
-});
+}).noUnknown();
 
 export const UpdateValidation = yup.object({
     displayName: yup.string(),
@@ -60,9 +60,9 @@ export const UpdateValidation = yup.object({
                 level: yup.number().required("Language level is required"),
             })
         ),
-});
+}).noUnknown();
 
 export const LoginValidation = yup.object({
     email: yup.string().email().required(),
     password: yup.string().min(6).required(),
-});
+}).noUnknown();

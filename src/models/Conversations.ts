@@ -5,7 +5,6 @@ const conversationsSchema = new mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "users",
-            unique: true,
         },
     ],
     createdAt: { type: Date, default: Date.now },
@@ -13,6 +12,6 @@ const conversationsSchema = new mongoose.Schema({
 
 conversationsSchema.index({ participants: 1 });
 
-const Conversations = mongoose.model("Conversations", conversationsSchema);
+const Conversations = mongoose.model("Conversation", conversationsSchema);
 
 export default Conversations;

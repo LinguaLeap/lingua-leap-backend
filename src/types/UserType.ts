@@ -4,9 +4,11 @@ export interface UserType {
     displayName: string;
     familyName: string;
     givenName: string;
+    birthDate: Date;
     photos: Photo[];
     emails: Email[];
-    mainLanguage: string;
+    country: number;
+    mainLanguage: string[];
     otherLanguages: LanguageLevel[];
     createdAt: string;
 }

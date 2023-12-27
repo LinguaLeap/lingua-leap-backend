@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const messagesSchema = new mongoose.Schema({
     conversationId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Conversations",
+        ref: "conversations",
         required: true,
     },
     senderId: {
@@ -11,7 +11,11 @@ const messagesSchema = new mongoose.Schema({
         ref: "users",
         required: true,
     },
-    content: { type: String, maxLength: 2000 },
+    content: { type: String, maxLength: 6000 },
+    status: {
+        type: Number,
+        default: 0, // 0: not transmitted, 1: transmitted, 2: seen
+    },
     timestamp: {
         type: Date,
         default: Date.now,
@@ -20,6 +24,6 @@ const messagesSchema = new mongoose.Schema({
 
 messagesSchema.index({ conversationId: 1, timestamp: 1 });
 
-const Messages = mongoose.model("Messages", messagesSchema);
+const Messages = mongoose.model("Message", messagesSchema);
 
 export default Messages;

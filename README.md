@@ -31,3 +31,11 @@ Restful API developed for Lingua Leap
 | /users:page | `POST` | { "displayName": "John Doe", "familyName": "John", "givenName": "Doe", "gender": 1, "birthDate": "2023-12-23T23:19:24.368+00:00", "country": 1, "mainLanguage": "TR", "otherLanguages": [ { "language": "EN", "level": 1 } ] } | Search in users list. |
 
 
+# Chat
+
+| Route | HTTP Verb	 | POST body	 | Description	 |
+| --- | --- | --- | --- |
+| /chat | `GET` | Empty | Get the list of conversations of own account. |
+| /chat | `POST` | { "conversationId": "eff2q344234", "page": 1 } | Get messages of the conversation. |
+
+
