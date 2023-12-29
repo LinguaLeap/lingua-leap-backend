@@ -3,12 +3,16 @@ import Conversations from "../models/Conversations";
 import Messages from "../models/Messages";
 import User from "../models/User";
 
-export const SampleData = async (req: Request, res:Response, next: NextFunction) => {
+export const SampleData = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     await createUsers();
     await createRandomConversations();
     await createMessagesForConversations();
-    res.json({message: "ok"})
-}
+    res.json({ message: "ok" });
+};
 
 export const createUsers = async () => {
     try {
@@ -19,7 +23,7 @@ export const createUsers = async () => {
                 emails: [{ value: "dilaver@google.com" }],
                 gender: 1,
                 birthDate: "2023-12-26T03:57:58.026+00:00",
-                country: 1,
+                country: "",
                 password: "123456",
                 mainLanguage: ["EN"],
                 otherLanguages: [{ language: "IT", level: 2 }],
@@ -30,7 +34,7 @@ export const createUsers = async () => {
                 emails: [{ value: "taylorswift@google.com" }],
                 gender: 1,
                 birthDate: "2023-12-26T03:57:58.026+00:00",
-                country: 1,
+                country: "",
                 password: "123456",
                 mainLanguage: ["EN"],
                 otherLanguages: [{ language: "IT", level: 2 }],
@@ -41,7 +45,7 @@ export const createUsers = async () => {
                 emails: [{ value: "cathysmith@google.com" }],
                 gender: 1,
                 birthDate: "2023-12-26T03:57:58.026+00:00",
-                country: 1,
+                country: "",
                 password: "123456",
                 mainLanguage: ["EN"],
                 otherLanguages: [{ language: "IT", level: 2 }],
@@ -52,7 +56,7 @@ export const createUsers = async () => {
                 emails: [{ value: "marygreeen@google.com" }],
                 gender: 1,
                 birthDate: "2023-12-26T03:57:58.026+00:00",
-                country: 1,
+                country: "",
                 password: "123456",
                 mainLanguage: ["EN"],
                 otherLanguages: [{ language: "IT", level: 2 }],
@@ -63,7 +67,7 @@ export const createUsers = async () => {
                 emails: [{ value: "jackbrown@google.com" }],
                 gender: 1,
                 birthDate: "2023-12-26T03:57:58.026+00:00",
-                country: 1,
+                country: "",
                 password: "123456",
                 mainLanguage: ["EN"],
                 otherLanguages: [{ language: "IT", level: 2 }],
@@ -74,7 +78,7 @@ export const createUsers = async () => {
                 emails: [{ value: "johndoe@google.com" }],
                 gender: 1,
                 birthDate: "2023-12-26T03:57:58.026+00:00",
-                country: 1,
+                country: "",
                 password: "123456",
                 mainLanguage: ["EN"],
                 otherLanguages: [{ language: "IT", level: 2 }],
@@ -140,7 +144,9 @@ export const createMessagesForConversations = async () => {
                     conversationId: conversation._id,
                     senderId: randomSenderId,
                     status: 2,
-                    content: `Sample message ${Math.floor(Math.random() * 999999) + 1}`,
+                    content: `Sample message ${
+                        Math.floor(Math.random() * 999999) + 1
+                    }`,
                 };
 
                 await Messages.create(message);

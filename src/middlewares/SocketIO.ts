@@ -2,7 +2,7 @@ import { getToken } from "../controllers/Auth/Auth";
 import { verifyToken } from "../helpers/jwtUtils";
 
 export const socketMiddleware = async (socket: any, next: any) => {
-    const token = socket.handshake.query.token;
+    const token = socket.handshake.auth.token;
     if (token) {
         if (!token.startsWith("Bearer ")) {
             next(new Error("unauthorized"));

@@ -7,10 +7,10 @@ const userSchema = new mongoose.Schema({
     familyName: String,
     givenName: String,
     photos: [{ value: String }],
-    emails: [{ value: { type: String, unique: true}, verified: Boolean, }],
+    emails: [{ value: { type: String, unique: true }, verified: Boolean }],
     gender: Number,
     birthDate: Date,
-    country: Number,
+    country: String,
     password: String,
     mainLanguage: [String],
     otherLanguages: [
@@ -29,8 +29,8 @@ userSchema.pre("save", async function (next) {
     try {
         if (this.isNew && this.password) {
             const salt = await bcrypt.genSalt(10);
-			const hashed = await bcrypt.hash(this.password, salt);
-			this.password = hashed;
+            const hashed = await bcrypt.hash(this.password, salt);
+            this.password = hashed;
         }
 
         next();
@@ -41,7 +41,7 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.isValidPass = async function (pass: any) {
     return await bcrypt.compare(pass, this.password);
-}
+};
 
 const User = mongoose.model("User", userSchema);
 

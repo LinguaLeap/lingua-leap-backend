@@ -7,24 +7,24 @@ export interface UserType {
     birthDate: Date;
     photos: Photo[];
     emails: Email[];
-    country: number;
+    country: string;
     mainLanguage: string[];
     otherLanguages: LanguageLevel[];
     createdAt: string;
-}
-
-export interface Photo {
+  }
+  
+  export interface Photo {
     value: string;
     _id: string;
-}
-
-export interface Email {
+  }
+  
+  export interface Email {
     value: string;
     verified: boolean;
     _id: string;
-}
-
-export interface LanguageLevel {
+  }
+  
+  export interface LanguageLevel {
     language: string;
     level: number;
-}
+  }

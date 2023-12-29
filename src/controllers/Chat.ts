@@ -13,6 +13,7 @@ export const GetMessagesFromConversation = async (
     next: NextFunction
 ) => {
     const conversationId = new mongoose.Types.ObjectId(req.body.conversationId);
+    const userId = new mongoose.Types.ObjectId((req.user as UserType)._id);
     const page = parseInt(req.body.page as string) || 1;
 
     const startIndex = (page - 1) * limit;
@@ -20,9 +21,7 @@ export const GetMessagesFromConversation = async (
     try {
         const conversation = await Conversations.find({
             _id: conversationId,
-            participants: new mongoose.Types.ObjectId(
-                (req.user as UserType)._id
-            ),
+            participants: userId,
         });
 
         if (conversation.length === 0) {
@@ -33,6 +32,15 @@ export const GetMessagesFromConversation = async (
             .sort({ timestamp: -1 })
             .skip(startIndex)
             .limit(limit);
+
+        await Messages.updateMany(
+            {
+                conversationId: conversationId,
+                senderId: { $ne: userId },
+                status: { $lt: 2 },
+            },
+            { $set: { status: 2 } }
+        );
 
         const totalMessages = await Messages.countDocuments({ conversationId });
         const totalPages = Math.ceil(totalMessages / limit);
@@ -89,8 +97,18 @@ export const GetConversationsList = async (
 
                 const unseenMessageCount = await Messages.countDocuments({
                     conversationId: conversation._id,
-                    status: 1,
+                    senderId: { $ne: userId },
+                    status: { $lt: 2 },
                 });
+
+                await Messages.updateMany(
+                    {
+                        conversationId: conversation._id,
+                        senderId: { $ne: userId },
+                        status: 0,
+                    },
+                    { $set: { status: 1 } }
+                );
 
                 return {
                     conversation: {
