@@ -37,7 +37,7 @@ export const LoginWithEmail = async (
     const { email, password } = req.body;
 
     try {
-        await LoginValidation.validate(req.body);
+        await LoginValidation.validate(req.body, { stripUnknown: false });
     } catch (error: any) {
         return next(boom.badRequest(error.errors));
     }
@@ -78,7 +78,7 @@ export const Register = async (
     const data: UserType = req.body;
 
     try {
-        await RegisterValidation.validate(data);
+        await RegisterValidation.validate(data, { stripUnknown: false });
     } catch (error: any) {
         return next(boom.badRequest(error.errors));
     }
@@ -122,7 +122,7 @@ export const Update = async (
     const data: UserType = req.body;
 
     try {
-        await UpdateValidation.validate(data);
+        await UpdateValidation.validate(data, { stripUnknown: false });
     } catch (error: any) {
         return next(boom.badRequest(error.errors));
     }
@@ -151,11 +151,12 @@ export const ChangePassword = async (
     const data: ChangePasswordType = req.body;
 
     try {
-        await ChangePasswordValidation.validate(data);
+        await ChangePasswordValidation.validate(data, { stripUnknown: false });
     } catch (error: any) {
         return next(boom.badRequest(error.errors));
     }
-
+    // @ts-ignore
+    console.log(data.test);
     try {
         const user = await User.findById((req.user as LoggedUser)._id);
 

@@ -71,11 +71,10 @@ export const ChangePasswordValidation = yup
         oldPassword: yup.string().required(),
         newPassword: yup.string().required(),
         repeatNewPassword: yup.string().required(),
-    })
-    .noUnknown();
+    }).noUnknown();
 
 export const LoginValidation = yup
-    .object({
+    .object({   
         email: yup.string().email().required(),
         password: yup.string().min(6).required(),
     })
