@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../helpers/jwtUtils";
 import { getToken } from "../controllers/Auth/Auth";
-import { UserType } from "../types/UserType";
+import { LoggedUser, UserType } from "../types/UserType";
 
 const isAuthenticated = async (
     req: Request,
@@ -25,7 +25,7 @@ const isAuthenticated = async (
         // @ts-ignore
         req.user = decodedToken.user;
 
-        const storedToken = await getToken((req.user as UserType)._id);
+        const storedToken = await getToken((req.user as LoggedUser)._id);
 
         if (!storedToken || storedToken !== token.split(" ")[1]) {
             return res.status(401).json({ message: "Unauthorized" });

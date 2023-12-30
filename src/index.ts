@@ -38,26 +38,26 @@ async function bootstrap() {
 
     app.use("/", router);
 
-    app.use((err:any, req: Request, res: Response, next: NextFunction) => {
+    app.use((err: any, req: Request, res: Response, next: NextFunction) => {
         console.log(err);
-    
+
         if (err) {
             if (err.output) {
                 return res
                     .status(err.output.statusCode || 500)
                     .json(err.output.payload);
             }
-    
+
             return res.status(500).json(err);
         }
     });
-    
+
     const server = app.listen(port, () => {
         console.log(`Server is running at http://localhost:${port}`);
     });
 
     io.attach(server);
-    
+
     database.connect();
 }
 

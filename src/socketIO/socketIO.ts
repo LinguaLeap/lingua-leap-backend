@@ -26,6 +26,9 @@ io.on("connection", (socket) => {
     socket.join(socket.data.user._id);
 
     socket.on("sendMessage", ({ toUserId, message }) => {
+        // @ts-ignore
+        const room = io.sockets.adapter.rooms.get(toUserId);
+        console.log(socket.data.user._id)
         io.to(toUserId).emit("receiveMessage", {
             fromUser: socket.data.user,
             message,

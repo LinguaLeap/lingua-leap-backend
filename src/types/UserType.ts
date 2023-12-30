@@ -11,20 +11,26 @@ export interface UserType {
     mainLanguage: string[];
     otherLanguages: LanguageLevel[];
     createdAt: string;
-  }
-  
-  export interface Photo {
+}
+
+export interface LoggedUser {
+    _id: string;
+    googleId: null | string;
+    token: string;
+}
+
+export interface Photo {
     value: string;
     _id: string;
-  }
-  
-  export interface Email {
+}
+
+export interface Email {
     value: string;
     verified: boolean;
     _id: string;
-  }
-  
-  export interface LanguageLevel {
+}
+
+export interface LanguageLevel {
     language: string;
     level: number;
-  }
+}

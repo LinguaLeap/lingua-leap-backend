@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../helpers/jwtUtils";
 import client from "../../configs/redisClient";
-import { UserType } from "../../types/UserType";
+import { LoggedUser, UserType } from "../../types/UserType";
 import {
     LoginValidation,
     RegisterValidation,
@@ -19,7 +19,7 @@ export const LoginWithGoogle = async (
         return next(boom.unauthorized("Unauthorized"));
     }
 
-    const user = req.user as UserType;
+    const user = req.user as LoggedUser;
 
     const token = generateToken(user);
 
@@ -55,15 +55,16 @@ export const LoginWithEmail = async (
         return next(boom.unauthorized("email or password are not correct"));
     }
 
-    const userData: UserType = user.toObject();
-    //@ts-ignore
-    delete userData.password;
-    //@ts-ignore
-    delete userData.__v;
+    const result: LoggedUser = {
+        _id: user._id.toString(),
+        googleId: null,
+        //@ts-ignore
+        token: user.password.slice(41),
+    };
 
-    const token = generateToken(userData);
+    const token = generateToken(result);
 
-    storeToken(userData._id, token);
+    storeToken(user._id.toString(), token);
 
     res.json({ token });
 };
@@ -94,15 +95,17 @@ export const Register = async (
 
         const user = new User(data);
         const savedData = await user.save();
-        const userData: UserType = savedData.toObject();
-        //@ts-ignore
-        delete userData.password;
-        //@ts-ignore
-        delete userData.__v;
 
-        const token = generateToken(userData);
+        const result: LoggedUser = {
+            _id: savedData._id.toString(),
+            googleId: null,
+            //@ts-ignore
+            token: savedData.password.slice(41),
+        };
 
-        storeToken(userData._id, token);
+        const token = generateToken(result);
+
+        storeToken(savedData._id.toString(), token);
 
         res.json({ token });
     } catch (error) {
@@ -123,17 +126,32 @@ export const Update = async (
         return next(boom.badRequest(error.errors));
     }
 
-    if (data._id !== (req.user as UserType)._id) {
+    if (data._id !== (req.user as LoggedUser)._id) {
         return next(boom.illegal("You can not update another account."));
     }
 
     try {
         const updated = await User.findByIdAndUpdate(
-            (req.user as UserType)._id,
+            (req.user as LoggedUser)._id,
             data
         );
 
-        res.json({ message: "ok" });
+        if (!updated) {
+            return next(boom.notFound("User not found"));
+        }
+
+        const result: LoggedUser = {
+            _id: updated._id.toString(),
+            googleId: null,
+            //@ts-ignore
+            token: updated.password.slice(41),
+        };
+
+        const token = generateToken(result);
+
+        storeToken(updated._id.toString(), token);
+
+        res.json({ newToken: token });
     } catch (e) {
         next(e);
     }
@@ -141,8 +159,10 @@ export const Update = async (
 
 export const Me = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = req.user;
-
+        const user = await User.findById((req.user as LoggedUser)._id).select(
+            "-password -__v"
+        );
+        console.log(req.user)
         res.json({ user });
     } catch (error) {
         console.error(error);
