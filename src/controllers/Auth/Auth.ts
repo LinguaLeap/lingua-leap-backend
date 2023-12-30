@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../helpers/jwtUtils";
 import client from "../../configs/redisClient";
-import { LoggedUser, UserType } from "../../types/UserType";
+import { ChangePasswordType, LoggedUser, UserType } from "../../types/UserType";
 import {
+    ChangePasswordValidation,
     LoginValidation,
     RegisterValidation,
     UpdateValidation,
@@ -126,11 +127,49 @@ export const Update = async (
         return next(boom.badRequest(error.errors));
     }
 
-    if (data._id !== (req.user as LoggedUser)._id) {
-        return next(boom.illegal("You can not update another account."));
+    try {
+        const updated = await User.findByIdAndUpdate(
+            (req.user as LoggedUser)._id,
+            data
+        );
+
+        if (!updated) {
+            return next(boom.notFound("User not found"));
+        }
+
+        res.json({ message: "ok" });
+    } catch (e) {
+        next(e);
+    }
+};
+
+export const ChangePassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const data: ChangePasswordType = req.body;
+
+    try {
+        await ChangePasswordValidation.validate(data);
+    } catch (error: any) {
+        return next(boom.badRequest(error.errors));
     }
 
     try {
+        const user = await User.findById((req.user as LoggedUser)._id);
+
+        // @ts-ignore
+        const isMatched = await user.isValidPass(data.oldPassword);
+
+        if (!isMatched) {
+            return next(boom.unauthorized("Invalid previous password."));
+        }
+
+        if (data.newPassword !== data.repeatNewPassword) {
+            return next(boom.badRequest("New passwords do not match."));
+        }
+
         const updated = await User.findByIdAndUpdate(
             (req.user as LoggedUser)._id,
             data
@@ -151,7 +190,7 @@ export const Update = async (
 
         storeToken(updated._id.toString(), token);
 
-        res.json({ newToken: token });
+        res.json({ message: "ok" });
     } catch (e) {
         next(e);
     }
@@ -162,7 +201,7 @@ export const Me = async (req: Request, res: Response, next: NextFunction) => {
         const user = await User.findById((req.user as LoggedUser)._id).select(
             "-password -__v"
         );
-        console.log(req.user)
+        console.log(req.user);
         res.json({ user });
     } catch (error) {
         console.error(error);

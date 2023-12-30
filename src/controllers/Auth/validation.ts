@@ -56,7 +56,6 @@ export const UpdateValidation = yup
         gender: yup.number(),
         birthDate: yup.date(),
         country: yup.string(),
-        password: yup.string(),
         mainLanguage: yup.array().of(yup.string()),
         otherLanguages: yup.array().of(
             yup.object({
@@ -64,6 +63,14 @@ export const UpdateValidation = yup
                 level: yup.number().required("Language level is required"),
             })
         ),
+    })
+    .noUnknown();
+
+export const ChangePasswordValidation = yup
+    .object({
+        oldPassword: yup.string().required(),
+        newPassword: yup.string().required(),
+        repeatNewPassword: yup.string().required(),
     })
     .noUnknown();
 

@@ -19,7 +19,8 @@ Restful API developed for Lingua Leap
 | /auth/me | `GET` | Empty | Check auth. |
 | /auth/login | `POST` | { "email": "johndoe@google.com", "password": "p4ssw0rd" } | Login with email and password. |
 | /auth/register | `POST` | { "familyName": "Doe", "givenName": "John", "emails": [ { "value": "johndoe@google.com" } ], "gender": 1, "birthDate": "2023-12-26T03:57:58.026+00:00", "country": 1, "password": "p4ssw0rd", "mainLanguage": "EN", "otherLanguages": [ { "language": "IT", "level": 2 } ] } | Register with email and pass. |
-| /auth/update | `PUT` | { "familyName": "Doe", "givenName": "John", "gender": 1, "birthDate": "2023-12-26T03:57:58.026+00:00", "country": 1, "password": "p4ssw0rd", "mainLanguage": "EN", "otherLanguages": [ { "language": "IT", "level": 2 } ] } | Update your user. |
+| /auth/update | `PUT` | { "familyName": "Doe", "givenName": "John", "gender": 1, "birthDate": "2023-12-26T03:57:58.026+00:00", "country": 1,  "mainLanguage": "EN", "otherLanguages": [ { "language": "IT", "level": 2 } ] } | Update your user. |
+| /auth/changePassword | `PUT` | { "oldPassword": "p4ssw0rd", "newPassword": "n3wP4ssw0rd", "repeatNewPassword": "n3wP4ssw0rd" } | Update your password. |
 
 
 # Users

@@ -34,3 +34,9 @@ export interface LanguageLevel {
     language: string;
     level: number;
 }
+
+export interface ChangePasswordType {
+    oldPassword: string;
+    newPassword: string;
+    repeatNewPassword: string;
+}
