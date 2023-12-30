@@ -155,8 +155,7 @@ export const ChangePassword = async (
     } catch (error: any) {
         return next(boom.badRequest(error.errors));
     }
-    // @ts-ignore
-    console.log(data.test);
+
     try {
         const user = await User.findById((req.user as LoggedUser)._id);
 
