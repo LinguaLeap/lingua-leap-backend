@@ -170,9 +170,9 @@ export const ChangePassword = async (
             return next(boom.badRequest("New passwords do not match."));
         }
 
-        const updated = await User.findByIdAndUpdate(
-            (req.user as LoggedUser)._id,
-            data
+        const updated = await User.findOneAndUpdate(
+            { _id: (req.user as LoggedUser)._id },
+            { password: data.newPassword }
         );
 
         if (!updated) {
@@ -190,7 +190,7 @@ export const ChangePassword = async (
 
         storeToken(updated._id.toString(), token);
 
-        res.json({ message: "ok" });
+        res.json({ newToken: token });
     } catch (e) {
         next(e);
     }

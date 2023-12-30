@@ -39,6 +39,22 @@ userSchema.pre("save", async function (next) {
     }
 });
 
+userSchema.pre("findOneAndUpdate", async function (next) {
+    try {
+        const update = this.getUpdate();
+        // @ts-ignore
+        if (update.password) {
+            const salt = await bcrypt.genSalt(10);
+            // @ts-ignore
+            const hashed = await bcrypt.hash(update.password, salt);
+            this.setUpdate({ $set: { password: hashed } });
+        }
+        next();
+    } catch (error: any) {
+        next(error);
+    }
+});
+
 userSchema.methods.isValidPass = async function (pass: any) {
     return await bcrypt.compare(pass, this.password);
 };
