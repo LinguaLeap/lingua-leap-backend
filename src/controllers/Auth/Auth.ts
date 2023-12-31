@@ -201,7 +201,7 @@ export const Me = async (req: Request, res: Response, next: NextFunction) => {
         const user = await User.findById((req.user as LoggedUser)._id).select(
             "-password -__v"
         );
-        console.log(req.user);
+
         res.json({ user });
     } catch (error) {
         console.error(error);
