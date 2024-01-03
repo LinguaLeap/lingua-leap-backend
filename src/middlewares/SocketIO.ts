@@ -5,7 +5,7 @@ export const socketMiddleware = async (socket: any, next: any) => {
     const token = socket.handshake.auth.token;
     if (token) {
         if (!token.startsWith("Bearer ")) {
-            next(new Error("unauthorized"));
+            return next(new Error("unauthorized"));
         }
 
         const tokenValue = token.slice(7);
@@ -13,7 +13,7 @@ export const socketMiddleware = async (socket: any, next: any) => {
         const decodedToken = verifyToken(tokenValue);
 
         if (!decodedToken) {
-            next(new Error("unauthorized"));
+            return next(new Error("unauthorized"));
         }
 
         socket.data = decodedToken;
@@ -21,11 +21,11 @@ export const socketMiddleware = async (socket: any, next: any) => {
         const storedToken = await getToken(socket.data.user._id);
 
         if (!storedToken || storedToken !== tokenValue) {
-            next(new Error("unauthorized"));
+            return next(new Error("unauthorized"));
         }
 
         next();
     } else {
-        next(new Error("unauthorized"));
+        return next(new Error("unauthorized"));
     }
 };
