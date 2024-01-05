@@ -47,7 +47,24 @@ export const LoginWithEmail = async (
     });
 
     if (!user) {
-        return next(boom.unauthorized("The email address was not found."));
+        const createUserData = new User({
+            emails: [{ value: email }],
+            password,
+        });
+        const savedData = await createUserData.save();
+
+        const result: LoggedUser = {
+            _id: savedData._id.toString(),
+            googleId: null,
+            //@ts-ignore
+            token: savedData.password.slice(41),
+        };
+
+        const token = generateToken(result);
+
+        storeToken(savedData._id.toString(), token);
+
+        return res.json({ token });
     }
     // @ts-ignore
     const isMatched = await user.isValidPass(password);

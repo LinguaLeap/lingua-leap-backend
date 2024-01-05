@@ -134,7 +134,7 @@ export const createMessagesForConversations = async () => {
         for (const conversation of conversations) {
             const participants = conversation.participants;
 
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 500; i++) {
                 const randomSenderIndex = Math.floor(
                     Math.random() * participants.length
                 );
