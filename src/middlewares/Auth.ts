@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../helpers/jwtUtils";
 import { getToken } from "../controllers/Auth/Auth";
-import { LoggedUser, UserType } from "../types/UserType";
+import { LoggedUser } from "../types/UserType";
+import boom from "@hapi/boom";
 
 const isAuthenticated = async (
     req: Request,
@@ -11,16 +12,16 @@ const isAuthenticated = async (
     const token = req.headers.authorization;
 
     if (!token || !token.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return next(boom.unauthorized("UnAuthenticated"));
     }
-
+    
     const tokenValue = token.slice(7);
 
     try {
         const decodedToken = verifyToken(tokenValue);
 
         if (!decodedToken) {
-            return res.status(401).json({ message: "Unauthorized" });
+            return next(boom.unauthorized("UnAuthenticated"));
         }
         // @ts-ignore
         req.user = decodedToken.user;
@@ -28,12 +29,12 @@ const isAuthenticated = async (
         const storedToken = await getToken((req.user as LoggedUser)._id);
 
         if (!storedToken || storedToken !== token.split(" ")[1]) {
-            return res.status(401).json({ message: "Unauthorized" });
+            return next(boom.unauthorized("UnAuthenticated"));
         }
 
         next();
     } catch (error) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return next(boom.unauthorized("UnAuthenticated"));
     }
 };
 
