@@ -29,6 +29,11 @@ export const GetMessagesFromConversation = async (
         }
 
         const messages = await Messages.find({ conversationId })
+            .populate({
+                path: "senderId",
+                model: "User",
+                select: "_id displayName familyName givenName",
+            })
             .sort({ timestamp: -1 })
             .skip(startIndex)
             .limit(limit);
