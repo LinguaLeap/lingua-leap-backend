@@ -58,7 +58,7 @@ export const SearchUserList = async (
     next: NextFunction
 ) => {
     const filterObject = req.body;
-    const page = parseInt(req.query.page as string) || 1;
+    const page = filterObject.pageParam || 1;
     const startIndex = (page - 1) * limit;
 
     const query: QueryType = {}

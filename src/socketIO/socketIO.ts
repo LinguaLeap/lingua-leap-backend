@@ -29,6 +29,7 @@ io.on("connection", (socket) => {
     socket.join(socket.data.user._id);
 
     socket.on("sendMessage", async ({ toUserId, message }) => {
+        console.log(toUserId, message)
         const isOnline = io.sockets.adapter.rooms.get(toUserId);
         const participants = [
             new mongoose.Types.ObjectId(toUserId),
